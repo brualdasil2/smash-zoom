@@ -19,6 +19,7 @@ export const ZoomImage = styled.img`
             transform: scale(1.0);
         }
     } 
+    transform-origin: ${(props) => `${50+props.zoomOffset.x}% ${50+props.zoomOffset.y}%`};
     animation: ${(props) => props.zoomAnimation};
     animation-duration: 10s;
     animation-iteration-count: 1;
