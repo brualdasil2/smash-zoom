@@ -8,6 +8,12 @@ function App() {
   const [binCounter, setBinCounter] = useState(true)
   const [zoomOffset, setZoomOffset] = useState({x: 0, y: 0})
   const [alt, setAlt] = useState("")
+  const [showAnswer, setShowAnswer] = useState(false)
+
+  function parseDisplayName(urlName) {
+    let parsedName = (urlName.replace(/_/g, " ")).replace(/\w\S*/g, (word) => word.charAt(0).toUpperCase() + word.substr(1).toLowerCase())
+    return(parsedName)
+  }
 
   function randomizeOffset() {
     const xOffset = Math.round(-10 + Math.random()*20);
@@ -23,6 +29,7 @@ function App() {
     setFighterNumber(randomNumber)
     setBinCounter(!binCounter)
     randomizeOffset()
+    setShowAnswer(false)
   }
   function startZoom() {
     setZooming(true)
@@ -42,6 +49,8 @@ function App() {
         ) : (
         <Button onClick={startZoom}>Começar</Button>
       )}
+      <Button onClick={() => {setShowAnswer(true)}}>Mostrar resposta</Button>
+      {showAnswer && <h2>{parseDisplayName(fighters[fighterNumber])}</h2>}
     </div>
   );
 }
