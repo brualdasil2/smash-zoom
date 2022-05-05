@@ -1,7 +1,23 @@
 import styled from "styled-components";
 
+export const ScreenContainer = styled.div`
+    width: 100vw;
+    height: 100vh;
+    padding-top: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+`
+
+export const MainContainer = styled.main`
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+`
+
 export const ZoomImage = styled.img`
-    width: 300px;
+    width: 100%;
     height: auto;
     @keyframes zoom2 {
         0% {
@@ -25,11 +41,14 @@ export const ZoomImage = styled.img`
     animation-iteration-count: 1;
     animation-timing-function: linear;
     animation-play-state: ${(props) => props.zooming ? "running" : "paused"};
+    display: ${(props) => props.loaded ? "inline" : "none"};
 `
 export const ImgContainer = styled.div`
     overflow: hidden;
     border: 1px black solid;
-    width: min-content;
+    width: 80%;
+    min-height: 300px;
+    max-width: 500px;
 `
 export const Button = styled.button`
     width: 100px;

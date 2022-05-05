@@ -72,7 +72,7 @@ export const fighters = [
     "incineroar",
     "piranha_plant",
     "joker",
-    "hero",
+    "dq_hero",
     "banjo_and_kazooie",
     "terry",
     "byleth",
