@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { fighters } from "../../utils/fighters"
 import { ZoomImage, ImgContainer, MainContainer, ScreenContainer, ButtonGroupContainer } from "./styles"
-import { Button, ButtonGroup, Typography, Autocomplete, TextField, AppBar, IconButton, Toolbar, Drawer } from "@mui/material"
+import { Button, Typography, Autocomplete, TextField, AppBar, IconButton, Toolbar, Drawer } from "@mui/material"
 import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import SettingsIcon from '@mui/icons-material/Settings';
 import Settings from "../../components/Settings"
 
 function Home() {
-  const [fighterNumber, setFighterNumber] = useState(0)
+  const [fighterNumber, setFighterNumber] = useState(Math.round(Math.random()*82))
   const [zooming, setZooming] = useState(false)
   const [binCounter, setBinCounter] = useState(true)
   const [zoomOffset, setZoomOffset] = useState({x: 0, y: 0})
@@ -18,13 +18,13 @@ function Home() {
   const [loaded, setLoaded] = useState(false)
   const [typedGuess, setTypedGuess] = useState("")
   const [settingsOpen, setSettingsOpen] = useState(false)
-
-  const settings = {
-    useAlts: false,
-    initialZoom: 20,
-    zoomTime: 10,
-    zoomOffsetRange: 20,
-  }
+  const [settings, setSettings] = useState(
+    {
+      useAlts: false,
+      initialZoom: 20,
+      zoomTime: 10,
+      zoomOffsetRange: 20,
+    })
 
   function parseDisplayName(urlName) {
     let parsedName = (urlName.replace(/_/g, " ")).replace(/\w\S*/g, (word) => word.charAt(0).toUpperCase() + word.substr(1).toLowerCase())
@@ -85,7 +85,16 @@ function Home() {
         open={settingsOpen}
         onClose={() => setSettingsOpen(false)}
       >
-        <Settings />
+        <Settings 
+          onChangeAlt={(checked) => {setSettings({...settings, useAlts: checked})}}
+          altValue={settings.useAlts}
+          onChangeZoom={(zoom) => {setSettings({...settings, initialZoom: zoom})}}
+          zoomValue={settings.initialZoom}
+          onChangeZoomTime={(zoomTime) => {setSettings({...settings, zoomTime})}}
+          zoomTimeValue={settings.zoomTime}
+          onChangeZoomOffset={(zoomOffset) => {setSettings({...settings, zoomOffsetRange: zoomOffset})}}
+          zoomOffsetValue={settings.zoomOffsetRange}
+        />
       </Drawer>
       <MainContainer>
         <ImgContainer>

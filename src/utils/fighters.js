@@ -76,7 +76,7 @@ export const fighters = [
     "banjo_and_kazooie",
     "terry",
     "byleth",
-    "min_min",
+    "minmin",
     "steve",
     "sephiroth",
     "pyra",
