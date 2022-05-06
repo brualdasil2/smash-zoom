@@ -14,6 +14,8 @@ function Home() {
   const [showAnswer, setShowAnswer] = useState(false)
   const [guess, setGuess] = useState("")
   const [loaded, setLoaded] = useState(false)
+  const [typedGuess, setTypedGuess] = useState("")
+
 
   const settings = {
     useAlts: false,
@@ -39,10 +41,15 @@ function Home() {
     const altString =  randomAlt === 1 ? "" : `${randomAlt}`
     setAlt(altString)
     setFighterNumber(randomNumber)
+  }
+  function newRound() {
+    randomizeFighter()
     setBinCounter(!binCounter)
     randomizeOffset()
     setShowAnswer(false)
     setLoaded(false)
+    setGuess("")
+    setTypedGuess("")
   }
   function startZoom() {
     setZooming(true)
@@ -51,12 +58,7 @@ function Home() {
     setZooming(false)
   }
   function handleInputChange(e, value, reason) {
-    if (reason === "clear") {
-        setGuess("")
-    }
-    else if (reason === "reset") {
-        setGuess(value)
-    }
+    setGuess(value)
   }
   function handleGuess() {
       if (guess === parseDisplayName(fighters[fighterNumber])) {
@@ -80,8 +82,8 @@ function Home() {
             zoomAnimation={binCounter} 
             src={`https://www.smashbros.com/assets_v2/img/fighter/${fighters[fighterNumber]}/main${alt}.png`}/>
         </ImgContainer>
-        <ButtonGroupContainer sx={{marginTop: "15px", width: "min-content", display: "flex"}}>
-          <Button variant="contained" onClick={randomizeFighter} disabled={zooming}>Sortear</Button>
+        <ButtonGroupContainer>
+          <Button variant="contained" onClick={newRound} disabled={zooming}>Sortear</Button>
           {zooming ? (
             <Button variant="contained" onClick={pauseZoom}><PauseIcon/></Button>
             ) : (
@@ -94,7 +96,11 @@ function Home() {
             options={fighters.map((name) => (parseDisplayName(name)))}
             sx={{ width: "200px", marginTop: "30px"}}
             renderInput={(params) => <TextField {...params} label="Personagem" />}
-            onInputChange={(e, value, reason) => {handleInputChange(e, value, reason)}}
+            onChange={(e, value, reason) => {handleInputChange(e, value, reason)}}
+            onInputChange={(e, value, reason) => {setTypedGuess(value)}}
+            inputValue={typedGuess}
+            value={guess}
+            isOptionEqualToValue={(option, value) => (option === value || value === "")}
         />
         <Button variant="contained" disabled={guess === ""} onClick={handleGuess} sx={{marginTop: "15px"}}>Responder</Button>
       </MainContainer>
