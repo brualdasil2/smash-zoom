@@ -94,6 +94,7 @@ function Home() {
           zoomTimeValue={settings.zoomTime}
           onChangeZoomOffset={(zoomOffset) => {setSettings({...settings, zoomOffsetRange: zoomOffset})}}
           zoomOffsetValue={settings.zoomOffsetRange}
+          closeDrawer={() => setSettingsOpen(false)}
         />
       </Drawer>
       <MainContainer>

@@ -1,5 +1,6 @@
 import { SettingsContainer, ExampleImageContainer, ExampleImage, ExampleAreaRect } from "./styles"
-import { Typography, Switch, Container, FormControlLabel, TextField, Slider } from "@mui/material"
+import { Typography, Switch, Container, FormControlLabel, TextField, Slider, InputButton, AppBar, Toolbar, IconButton } from "@mui/material"
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 
 export default function Settings(
     {
@@ -10,11 +11,20 @@ export default function Settings(
         onChangeZoomTime,
         zoomTimeValue,
         onChangeZoomOffset,
-        zoomOffsetValue
+        zoomOffsetValue,
+        closeDrawer
     }) {
     return (
         <SettingsContainer>
-            <Typography variant="h4" sx={{marginBottom: "30px"}}>Configurações</Typography>
+            <AppBar position="static" sx={{marginBottom: "15px"}}>
+                <Toolbar sx={{justifyContent: "space-between"}}>
+                    <Typography variant="h5">Configurações</Typography>
+                    <IconButton onClick={closeDrawer}>
+                        <ArrowRightIcon />
+                    </IconButton>
+                </Toolbar>
+            </AppBar>
+            
             <FormControlLabel 
                 value="alts"
                 label="Alts"
