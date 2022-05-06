@@ -1,11 +1,10 @@
 import styled from "styled-components";
+import { keyframes } from "styled-components";
 
 export const ScreenContainer = styled.div`
     width: 100vw;
     height: 100vh;
     padding-top: 10px;
-    padding-left: 5px;
-    padding-right: 5px;
 `
 
 export const MainContainer = styled.main`
@@ -15,29 +14,29 @@ export const MainContainer = styled.main`
     flex-direction: column;
     align-items: center;
 `
+const zoom = (initialZoom) => keyframes`
+    0% {
+        transform: scale(${initialZoom});
+    }
+    100% {
+        transform: scale(1.0);
+    }
+`
+const zoom2 = (initialZoom) => keyframes`
+    0% {
+        transform: scale(${initialZoom});
+    }
+    100% {
+        transform: scale(1.0);
+    }
+`
 
 export const ZoomImage = styled.img`
     width: 100%;
     height: auto;
-    @keyframes zoom2 {
-        0% {
-            transform: scale(20.0);
-        }
-        100% {
-            transform: scale(1.0);
-        }
-    } 
-    @keyframes zoom {
-        0% {
-            transform: scale(20.0);
-        }
-        100% {
-            transform: scale(1.0);
-        }
-    } 
     transform-origin: ${(props) => `${50+props.zoomOffset.x}% ${50+props.zoomOffset.y}%`};
-    animation: ${(props) => props.zoomAnimation};
-    animation-duration: 10s;
+    animation: ${(props) => props.zoomAnimation ? zoom(props.initialZoom) : zoom2(props.initialZoom)};
+    animation-duration: ${(props) => props.zoomTime}s;
     animation-iteration-count: 1;
     animation-timing-function: linear;
     animation-play-state: ${(props) => props.zooming ? "running" : "paused"};
