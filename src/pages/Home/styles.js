@@ -43,6 +43,13 @@ export const ZoomImage = styled.img`
     animation-play-state: ${(props) => props.zooming ? "running" : "paused"};
     display: ${(props) => props.loaded ? "inline" : "none"};
 `
+export const ButtonGroupContainer = styled.div`
+    display: flex;
+    justify-content: space-around;
+    width: 80%;
+    max-width: 300px;
+    margin-top: 20px;
+`
 export const ImgContainer = styled.div`
     overflow: hidden;
     border: 1px black solid;
