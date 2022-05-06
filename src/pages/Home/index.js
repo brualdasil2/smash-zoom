@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { fighters } from "../../utils/fighters"
 import { ZoomImage, ImgContainer, MainContainer, ScreenContainer, ButtonGroupContainer } from "./styles"
-import { Button, ButtonGroup, Typography, Autocomplete, TextField } from "@mui/material"
+import { Button, ButtonGroup, Typography, Autocomplete, TextField, AppBar, IconButton, Toolbar, Drawer } from "@mui/material"
 import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import SettingsIcon from '@mui/icons-material/Settings';
+import Settings from "../../components/Settings"
 
 function Home() {
   const [fighterNumber, setFighterNumber] = useState(0)
@@ -11,11 +13,11 @@ function Home() {
   const [binCounter, setBinCounter] = useState(true)
   const [zoomOffset, setZoomOffset] = useState({x: 0, y: 0})
   const [alt, setAlt] = useState("")
-  const [showAnswer, setShowAnswer] = useState(false)
+  const [result, setResult] = useState("")
   const [guess, setGuess] = useState("")
   const [loaded, setLoaded] = useState(false)
   const [typedGuess, setTypedGuess] = useState("")
-
+  const [settingsOpen, setSettingsOpen] = useState(false)
 
   const settings = {
     useAlts: false,
@@ -46,10 +48,10 @@ function Home() {
     randomizeFighter()
     setBinCounter(!binCounter)
     randomizeOffset()
-    setShowAnswer(false)
     setLoaded(false)
     setGuess("")
     setTypedGuess("")
+    setResult("")
   }
   function startZoom() {
     setZooming(true)
@@ -62,14 +64,29 @@ function Home() {
   }
   function handleGuess() {
       if (guess === parseDisplayName(fighters[fighterNumber])) {
-          console.log("Acertou!")
+          setResult("Correto!")
       }
       else {
-          console.log("Errou!")
+          setResult("Errado!")
       }
   }
   return (
     <ScreenContainer>
+      <AppBar position="static">
+        <Toolbar sx={{justifyContent: "space-between"}}>
+          <Typography variant="h6">Smash Zoom</Typography>
+          <IconButton onClick={() => {setSettingsOpen(!settingsOpen)}}>
+            <SettingsIcon />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+      <Drawer
+        anchor="right"
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+      >
+        <Settings />
+      </Drawer>
       <MainContainer>
         <ImgContainer>
           {!loaded && <Typography variant="h4">Carregando...</Typography>}
@@ -103,6 +120,7 @@ function Home() {
             isOptionEqualToValue={(option, value) => (option === value || value === "")}
         />
         <Button variant="contained" disabled={guess === ""} onClick={handleGuess} sx={{marginTop: "15px"}}>Responder</Button>
+        <Typography variant="h2" sx={{marginTop: "20px"}}>{result}</Typography>
       </MainContainer>
     </ScreenContainer>
   );

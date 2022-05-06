@@ -4,15 +4,18 @@ import { keyframes } from "styled-components";
 export const ScreenContainer = styled.div`
     width: 100vw;
     height: 100vh;
-    padding-top: 10px;
+    display: flex;
+    flex-direction: column;
 `
 
 export const MainContainer = styled.main`
     width: 100%;
-    height: auto;
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding-top: 20px;
+    position: relative;
 `
 const zoom = (initialZoom) => keyframes`
     0% {
@@ -54,7 +57,7 @@ export const ImgContainer = styled.div`
     border: 1px black solid;
     width: 80%;
     min-height: 300px;
-    max-width: 500px;
+    max-width: 400px;
 `
 export const Button = styled.button`
     width: 100px;
