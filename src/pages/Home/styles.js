@@ -7,7 +7,25 @@ export const ScreenContainer = styled.div`
     display: flex;
     flex-direction: column;
 `
-
+export const StyledSpinner = styled.div`
+    border: 5px solid black;
+    border-top: 5px solid transparent;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 2s linear infinite;
+    position: relative;
+    left: calc(50% - 25px);
+    top: calc(50% - 25px);
+    @keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+`
 export const MainContainer = styled.main`
     width: 100%;
     height: 100%;
@@ -56,6 +74,7 @@ export const ImgContainer = styled.div`
     overflow: hidden;
     border: 1px black solid;
     width: 80%;
+    height: ${(props) => props.loaded ? "auto" : "300px"};
     min-height: 300px;
     max-width: 400px;
 `

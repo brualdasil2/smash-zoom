@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { fighters } from "../../utils/fighters"
-import { ZoomImage, ImgContainer, MainContainer, ScreenContainer, ButtonGroupContainer } from "./styles"
+import { ZoomImage, ImgContainer, MainContainer, ScreenContainer, ButtonGroupContainer, StyledSpinner } from "./styles"
 import { Button, Typography, Autocomplete, TextField, AppBar, IconButton, Toolbar, Drawer } from "@mui/material"
 import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -98,8 +98,8 @@ function Home() {
         />
       </Drawer>
       <MainContainer>
-        <ImgContainer>
-          {!loaded && <Typography variant="h4">Carregando...</Typography>}
+        <ImgContainer loaded>
+          {!loaded && <StyledSpinner />}
           <ZoomImage 
             initialZoom={settings.initialZoom} 
             zoomTime={settings.zoomTime}  
