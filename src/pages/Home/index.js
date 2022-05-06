@@ -1,7 +1,7 @@
 import { useState } from "react";
-import {fighters} from "../../utils/fighters"
+import { fighters } from "../../utils/fighters"
 import { ZoomImage, ImgContainer, MainContainer, ScreenContainer, ButtonGroupContainer } from "./styles"
-import { Button, ButtonGroup, Typography } from "@mui/material"
+import { Button, ButtonGroup, Typography, Autocomplete, TextField } from "@mui/material"
 import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
@@ -12,6 +12,7 @@ function Home() {
   const [zoomOffset, setZoomOffset] = useState({x: 0, y: 0})
   const [alt, setAlt] = useState("")
   const [showAnswer, setShowAnswer] = useState(false)
+  const [guess, setGuess] = useState("")
   const [loaded, setLoaded] = useState(false)
 
   function parseDisplayName(urlName) {
@@ -42,7 +43,22 @@ function Home() {
   function pauseZoom() {
     setZooming(false)
   }
-
+  function handleInputChange(e, value, reason) {
+    if (reason === "clear") {
+        setGuess("")
+    }
+    else if (reason === "reset") {
+        setGuess(value)
+    }
+  }
+  function handleGuess() {
+      if (guess === parseDisplayName(fighters[fighterNumber])) {
+          console.log("Acertou!")
+      }
+      else {
+          console.log("Errou!")
+      }
+  }
   return (
     <ScreenContainer>
       <MainContainer>
@@ -58,6 +74,15 @@ function Home() {
             <Button variant="contained" onClick={startZoom}><PlayArrowIcon/></Button>
           )}
         </ButtonGroupContainer>
+        <Autocomplete
+            disablePortal
+            id="fighter-options"
+            options={fighters.map((name) => (parseDisplayName(name)))}
+            sx={{ width: "200px", marginTop: "30px"}}
+            renderInput={(params) => <TextField {...params} label="Personagem" />}
+            onInputChange={(e, value, reason) => {handleInputChange(e, value, reason)}}
+        />
+        <Button variant="contained" disabled={guess === ""} onClick={handleGuess} sx={{marginTop: "15px"}}>Responder</Button>
       </MainContainer>
     </ScreenContainer>
   );
