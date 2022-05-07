@@ -116,7 +116,7 @@ function Home() {
             zoomOffset={zoomOffset} 
             zooming={zooming} 
             zoomAnimation={binCounter} 
-            onAnimationEnd={() => {clearInterval(intervalVar)}}
+            onAnimationEnd={() => {clearInterval(intervalVar);setZooming(false)}}
             src={`https://www.smashbros.com/assets_v2/img/fighter/${fighters[fighterNumber]}/main${alt}.png`}/>
         </ImgContainer>
         <ButtonGroupContainer>
