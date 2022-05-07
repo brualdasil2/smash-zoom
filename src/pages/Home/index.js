@@ -6,6 +6,7 @@ import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import SettingsIcon from '@mui/icons-material/Settings';
 import Settings from "../../components/Settings"
+import Timer from "../../components/Timer/inedx";
 
 function Home() {
   const [fighterNumber, setFighterNumber] = useState(Math.round(Math.random()*82))
@@ -18,6 +19,9 @@ function Home() {
   const [loaded, setLoaded] = useState(false)
   const [typedGuess, setTypedGuess] = useState("")
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [points, setPoints] = useState(100)
+  const [intervalVar, setIntervalVar] = useState()
+
   const [settings, setSettings] = useState(
     {
       useAlts: false,
@@ -52,12 +56,17 @@ function Home() {
     setGuess("")
     setTypedGuess("")
     setResult("")
+    setPoints(100)
   }
   function startZoom() {
     setZooming(true)
+    setIntervalVar(setInterval(() => {
+    setPoints(points => points - 1)
+    }, settings.zoomTime*10))
   }
   function pauseZoom() {
     setZooming(false)
+    clearInterval(intervalVar)
   }
   function handleInputChange(e, value, reason) {
     setGuess(value)
@@ -107,6 +116,7 @@ function Home() {
             zoomOffset={zoomOffset} 
             zooming={zooming} 
             zoomAnimation={binCounter} 
+            onAnimationEnd={() => {clearInterval(intervalVar)}}
             src={`https://www.smashbros.com/assets_v2/img/fighter/${fighters[fighterNumber]}/main${alt}.png`}/>
         </ImgContainer>
         <ButtonGroupContainer>
@@ -131,6 +141,7 @@ function Home() {
         />
         <Button variant="contained" disabled={guess === ""} onClick={handleGuess} sx={{marginTop: "15px"}}>Responder</Button>
         <Typography variant="h2" sx={{marginTop: "20px"}}>{result}</Typography>
+        <Typography variant="h4">{points}</Typography>
       </MainContainer>
     </ScreenContainer>
   );
