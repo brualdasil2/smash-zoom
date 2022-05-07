@@ -21,6 +21,7 @@ function Home() {
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [points, setPoints] = useState(100)
   const [intervalVar, setIntervalVar] = useState()
+  const [zoomEnded, setZoomEnded] = useState(false)
 
   const [settings, setSettings] = useState(
     {
@@ -57,6 +58,7 @@ function Home() {
     setTypedGuess("")
     setResult("")
     setPoints(100)
+    setZoomEnded(false)
   }
   function startZoom() {
     setZooming(true)
@@ -78,6 +80,12 @@ function Home() {
       else {
           setResult("Errado!")
       }
+  }
+  function handleZoomEnd() {
+    clearInterval(intervalVar)
+    setPoints(0)
+    setZooming(false)
+    setZoomEnded(true)
   }
   return (
     <ScreenContainer>
@@ -116,7 +124,7 @@ function Home() {
             zoomOffset={zoomOffset} 
             zooming={zooming} 
             zoomAnimation={binCounter} 
-            onAnimationEnd={() => {clearInterval(intervalVar);setZooming(false)}}
+            onAnimationEnd={handleZoomEnd}
             src={`https://www.smashbros.com/assets_v2/img/fighter/${fighters[fighterNumber]}/main${alt}.png`}/>
         </ImgContainer>
         <ButtonGroupContainer>
@@ -124,7 +132,7 @@ function Home() {
           {zooming ? (
             <Button variant="contained" onClick={pauseZoom}><PauseIcon/></Button>
             ) : (
-            <Button variant="contained" onClick={startZoom}><PlayArrowIcon/></Button>
+            <Button variant="contained" onClick={startZoom} disabled={zoomEnded}><PlayArrowIcon/></Button>
           )}
         </ButtonGroupContainer>
         <Autocomplete
