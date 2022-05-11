@@ -51,7 +51,7 @@ const zoom2 = (initialZoom) => keyframes`
         transform: scale(1.0);
     }
 `
-
+ 
 export const ZoomImage = styled.img`
     pointer-events: none;
     width: 100%;
