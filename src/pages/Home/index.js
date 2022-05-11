@@ -21,10 +21,9 @@ function Home() {
   const [typedGuess, setTypedGuess] = useState("")
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [points, setPoints] = useState(1000)
-  const [intervalVar, setIntervalVar] = useState()
   const [zoomEnded, setZoomEnded] = useState(false)
+  const [startTime, setStartTime] = useState(0)
 
-  let timeOfStart
 
   const [settings, setSettings] = useState(
     {
@@ -65,13 +64,19 @@ function Home() {
   }
   function startZoom() {
     setZooming(true)
-    setIntervalVar(setInterval(() => {
-    setPoints(points => (result === Result.RIGHT ? points : points - 1))
-    }, settings.zoomTime))
+    setStartTime(Date.now())
+  }
+  function cutOffAtZero(numb) {
+    if (numb >= 0) {
+      return numb
+    }
+    return 0
   }
   function pauseZoom() {
     setZooming(false)
-    clearInterval(intervalVar)
+    if (result !== Result.RIGHT) {
+      setPoints((points) => (cutOffAtZero(points - (Date.now() - startTime)/settings.zoomTime)))
+    }
   }
   function handleInputChange(e, value, reason) {
     setGuess(value)
@@ -85,7 +90,6 @@ function Home() {
       }
   }
   function handleZoomEnd() {
-    clearInterval(intervalVar)
     if (result !== Result.RIGHT)
       setPoints(0)
     setZooming(false)
@@ -151,9 +155,9 @@ function Home() {
             value={guess}
             isOptionEqualToValue={(option, value) => (option === value || value === "")}
         />
-        <Button variant="contained" disabled={guess === ""} onClick={handleGuess} sx={{marginTop: "15px"}}>Responder</Button>
+        <Button variant="contained" disabled={guess === "" || result === Result.RIGHT || zooming} onClick={handleGuess} sx={{marginTop: "15px"}}>Responder</Button>
         <Typography variant="h2" sx={{marginTop: "20px"}}>{result === Result.NOT_GUESSED ? "" : result === Result.RIGHT ? "Correto!" : "Errado!"}</Typography>
-        {result === Result.RIGHT && <Typography variant="h4">{points}</Typography>}
+        {result === Result.RIGHT && <Typography variant="h4">{Math.round(points)}</Typography>}
       </MainContainer>
     </ScreenContainer>
   );
