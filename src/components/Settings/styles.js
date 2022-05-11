@@ -27,3 +27,8 @@ export const ExampleImage = styled.img`
     width: 100%;
     height: auto;
 `
+
+export const FlexRowContainer = styled.div`
+    width: max-content;
+    display: flex;
+`
