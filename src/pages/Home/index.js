@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { fighters } from "../../utils/fighters"
+import { Result } from "../../utils/result"
 import { ZoomImage, ImgContainer, MainContainer, ScreenContainer, ButtonGroupContainer, StyledSpinner } from "./styles"
 import { Button, Typography, Autocomplete, TextField, AppBar, IconButton, Toolbar, Drawer } from "@mui/material"
 import PauseIcon from '@mui/icons-material/Pause';
@@ -14,14 +15,16 @@ function Home() {
   const [binCounter, setBinCounter] = useState(true)
   const [zoomOffset, setZoomOffset] = useState({x: 0, y: 0})
   const [alt, setAlt] = useState("")
-  const [result, setResult] = useState("")
+  const [result, setResult] = useState(Result.NOT_GUESSED)
   const [guess, setGuess] = useState("")
   const [loaded, setLoaded] = useState(false)
   const [typedGuess, setTypedGuess] = useState("")
   const [settingsOpen, setSettingsOpen] = useState(false)
-  const [points, setPoints] = useState(100)
+  const [points, setPoints] = useState(1000)
   const [intervalVar, setIntervalVar] = useState()
   const [zoomEnded, setZoomEnded] = useState(false)
+
+  let timeOfStart
 
   const [settings, setSettings] = useState(
     {
@@ -56,15 +59,15 @@ function Home() {
     setLoaded(false)
     setGuess("")
     setTypedGuess("")
-    setResult("")
-    setPoints(100)
+    setResult(Result.NOT_GUESSED)
+    setPoints(1000)
     setZoomEnded(false)
   }
   function startZoom() {
     setZooming(true)
     setIntervalVar(setInterval(() => {
-    setPoints(points => points - 1)
-    }, settings.zoomTime*10))
+    setPoints(points => (result === Result.RIGHT ? points : points - 1))
+    }, settings.zoomTime))
   }
   function pauseZoom() {
     setZooming(false)
@@ -75,15 +78,16 @@ function Home() {
   }
   function handleGuess() {
       if (guess === parseDisplayName(fighters[fighterNumber])) {
-          setResult("Correto!")
+          setResult(Result.RIGHT)
       }
       else {
-          setResult("Errado!")
+          setResult(Result.WRONG)
       }
   }
   function handleZoomEnd() {
     clearInterval(intervalVar)
-    setPoints(0)
+    if (result !== Result.RIGHT)
+      setPoints(0)
     setZooming(false)
     setZoomEnded(true)
   }
@@ -148,8 +152,8 @@ function Home() {
             isOptionEqualToValue={(option, value) => (option === value || value === "")}
         />
         <Button variant="contained" disabled={guess === ""} onClick={handleGuess} sx={{marginTop: "15px"}}>Responder</Button>
-        <Typography variant="h2" sx={{marginTop: "20px"}}>{result}</Typography>
-        <Typography variant="h4">{points}</Typography>
+        <Typography variant="h2" sx={{marginTop: "20px"}}>{result === Result.NOT_GUESSED ? "" : result === Result.RIGHT ? "Correto!" : "Errado!"}</Typography>
+        {result === Result.RIGHT && <Typography variant="h4">{points}</Typography>}
       </MainContainer>
     </ScreenContainer>
   );
