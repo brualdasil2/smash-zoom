@@ -53,6 +53,7 @@ const zoom2 = (initialZoom) => keyframes`
 `
 
 export const ZoomImage = styled.img`
+    pointer-events: none;
     width: 100%;
     height: auto;
     transform-origin: ${(props) => `${50+props.zoomOffset.x}% ${50+props.zoomOffset.y}%`};
