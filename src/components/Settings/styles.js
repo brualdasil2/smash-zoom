@@ -30,5 +30,6 @@ export const ExampleImage = styled.img`
 
 export const FlexRowContainer = styled.div`
     width: max-content;
+    max-width: 80%;
     display: flex;
 `

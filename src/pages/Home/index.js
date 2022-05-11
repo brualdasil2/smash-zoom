@@ -128,7 +128,8 @@ function Home() {
           <ZoomImage 
             initialZoom={settings.initialZoom} 
             zoomTime={settings.zoomTime}  
-            onLoad={() => {setLoaded(true)}} loaded={loaded} 
+            onLoad={() => {setLoaded(true)}} 
+            loaded={loaded} 
             zoomOffset={zoomOffset} 
             zooming={zooming} 
             zoomAnimation={binCounter} 
@@ -140,7 +141,7 @@ function Home() {
           {zooming ? (
             <Button variant="contained" onClick={pauseZoom}><PauseIcon/></Button>
             ) : (
-            <Button variant="contained" onClick={startZoom} disabled={zoomEnded}><PlayArrowIcon/></Button>
+            <Button variant="contained" onClick={startZoom} disabled={zoomEnded || !loaded}><PlayArrowIcon/></Button>
           )}
         </ButtonGroupContainer>
         <Autocomplete
@@ -157,7 +158,7 @@ function Home() {
         />
         <Button variant="contained" disabled={guess === "" || result === Result.RIGHT || zooming} onClick={handleGuess} sx={{marginTop: "15px"}}>Responder</Button>
         <Typography variant="h2" sx={{marginTop: "20px"}}>{result === Result.NOT_GUESSED ? "" : result === Result.RIGHT ? "Correto!" : "Errado!"}</Typography>
-        {result === Result.RIGHT && <Typography variant="h4">{Math.round(points)}</Typography>}
+        {result === Result.RIGHT && <Typography variant="h4">{`Pontos: ${Math.round(points)}`}</Typography>}
       </MainContainer>
     </ScreenContainer>
   );
