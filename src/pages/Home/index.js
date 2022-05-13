@@ -7,12 +7,10 @@ import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import SettingsIcon from '@mui/icons-material/Settings';
 import Settings from "../../components/Settings"
-import Timer from "../../components/Timer/inedx";
 
 function Home() {
   const [fighterNumber, setFighterNumber] = useState(Math.round(Math.random()*82))
   const [zooming, setZooming] = useState(false)
-  const [binCounter, setBinCounter] = useState(true)
   const [zoomOffset, setZoomOffset] = useState({x: 0, y: 0})
   const [alt, setAlt] = useState("")
   const [result, setResult] = useState(Result.NOT_GUESSED)
@@ -89,6 +87,8 @@ function Home() {
       }
   }
   function handleZoomEnd() {
+    //const elem = document.getElementById("Zoom__Image")
+    //elem.style.display = "none"
     if (result !== Result.RIGHT)
       setPoints(0)
     setZooming(false)
@@ -125,13 +125,13 @@ function Home() {
         <ImgContainer loaded>
           {!loaded && <StyledSpinner />}
           {!zoomEnded && <ZoomImage 
+            id="Zoom__Image"
             initialZoom={settings.initialZoom} 
             zoomTime={settings.zoomTime}  
             onLoad={() => {setLoaded(true)}} 
             loaded={loaded} 
             zoomOffset={zoomOffset} 
             zooming={zooming} 
-            zoomAnimation={binCounter} 
             onAnimationIteration={handleZoomEnd}
             src={`https://www.smashbros.com/assets_v2/img/fighter/${fighters[fighterNumber]}/main${alt}.png`}/>}
           <NoZoomImage 

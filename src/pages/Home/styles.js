@@ -35,6 +35,7 @@ export const MainContainer = styled.main`
     padding-top: 20px;
     position: relative;
 `
+
 const zoom = (initialZoom) => keyframes`
     0% {
         transform: scale(${initialZoom});
@@ -43,24 +44,17 @@ const zoom = (initialZoom) => keyframes`
         transform: scale(1.0);
     }
 `
-const zoom2 = (initialZoom) => keyframes`
-    0% {
-        transform: scale(${initialZoom});
-    }
-    100% {
-        transform: scale(1.0);
-    }
-`
- 
+
 export const ZoomImage = styled.img`
     pointer-events: none;
     width: 100%;
     height: auto;
     transform-origin: ${(props) => `${50+props.zoomOffset.x}% ${50+props.zoomOffset.y}%`};
-    animation: ${(props) => props.zoomAnimation ? zoom(props.initialZoom) : zoom2(props.initialZoom)};
+    animation: ${(props) => zoom(props.initialZoom)};
     animation-duration: ${(props) => props.zoomTime}s;
     animation-iteration-count: infinite;
     animation-timing-function: linear;
+    animation-direction: alternate;
     animation-play-state: ${(props) => props.zooming ? "running" : "paused"};
     display: ${(props) => props.loaded ? "inline" : "none"};
 `
