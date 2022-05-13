@@ -59,10 +59,16 @@ export const ZoomImage = styled.img`
     transform-origin: ${(props) => `${50+props.zoomOffset.x}% ${50+props.zoomOffset.y}%`};
     animation: ${(props) => props.zoomAnimation ? zoom(props.initialZoom) : zoom2(props.initialZoom)};
     animation-duration: ${(props) => props.zoomTime}s;
-    animation-iteration-count: 1;
+    animation-iteration-count: infinite;
     animation-timing-function: linear;
     animation-play-state: ${(props) => props.zooming ? "running" : "paused"};
     display: ${(props) => props.loaded ? "inline" : "none"};
+`
+export const NoZoomImage = styled.img`
+    pointer-events: none;
+    width: 100%;
+    height: auto;
+    display: ${(props) => !props.loaded ? "none" : (props.zoomEnded ? "inline" : "none")};
 `
 export const ButtonGroupContainer = styled.div`
     display: flex;

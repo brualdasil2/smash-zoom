@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { fighters } from "../../utils/fighters"
 import { Result } from "../../utils/result"
-import { ZoomImage, ImgContainer, MainContainer, ScreenContainer, ButtonGroupContainer, StyledSpinner } from "./styles"
+import { ZoomImage, ImgContainer, MainContainer, ScreenContainer, ButtonGroupContainer, StyledSpinner, NoZoomImage } from "./styles"
 import { Button, Typography, Autocomplete, TextField, AppBar, IconButton, Toolbar, Drawer } from "@mui/material"
 import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -53,7 +53,6 @@ function Home() {
   }
   function newRound() {
     randomizeFighter()
-    setBinCounter(!binCounter)
     randomizeOffset()
     setLoaded(false)
     setGuess("")
@@ -125,7 +124,7 @@ function Home() {
       <MainContainer>
         <ImgContainer loaded>
           {!loaded && <StyledSpinner />}
-          <ZoomImage 
+          {!zoomEnded && <ZoomImage 
             initialZoom={settings.initialZoom} 
             zoomTime={settings.zoomTime}  
             onLoad={() => {setLoaded(true)}} 
@@ -133,8 +132,13 @@ function Home() {
             zoomOffset={zoomOffset} 
             zooming={zooming} 
             zoomAnimation={binCounter} 
-            onAnimationEnd={handleZoomEnd}
-            src={`https://www.smashbros.com/assets_v2/img/fighter/${fighters[fighterNumber]}/main${alt}.png`}/>
+            onAnimationIteration={handleZoomEnd}
+            src={`https://www.smashbros.com/assets_v2/img/fighter/${fighters[fighterNumber]}/main${alt}.png`}/>}
+          <NoZoomImage 
+            loaded={loaded}
+            zoomEnded={zoomEnded}
+            src={`https://www.smashbros.com/assets_v2/img/fighter/${fighters[fighterNumber]}/main${alt}.png`}
+          />
         </ImgContainer>
         <ButtonGroupContainer>
           <Button variant="contained" onClick={newRound} disabled={zooming}>Sortear</Button>
