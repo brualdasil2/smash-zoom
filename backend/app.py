@@ -1,4 +1,6 @@
+from datetime import datetime
 from ntpath import join
+from turtle import back
 from flask import Flask, request, session
 from flask_socketio import SocketIO, emit, join_room, leave_room
 import pymongo
@@ -15,6 +17,9 @@ cluster = MongoClient("mongodb://127.0.0.1:27017/?directConnection=true&serverSe
 db = cluster["smash-zoom"]
 rooms = db["rooms"]
 
+ROOM_LOBBY, WAITING_SCORES, BETWEEN_ROUNDS, ENDGAME = range(4)
+NOT_PLAYED = -1
+LAST_ROUND = 2
 
 def generate_room_code():
     while True:
@@ -27,16 +32,49 @@ def generate_room_code():
 def get_room(room_code):
     return rooms.find_one({"code": room_code}, {"_id": 0})
 
+def get_user_room(sid):
+    return rooms.find_one({"users.sid":sid}, {"_id": 0})
+
+def update_user_field(sid, field, value):
+    rooms.update_one({"users.sid": sid}, {"$set": {f"users.$.{field}": value}})
+
 def execute_leave_room(sid):
-    res = rooms.find_one({"users": {"$elemMatch": {"sid": sid}}})
+    res = get_user_room(sid)
+    if not res:
+        return None
     room_code = res["code"]
     rooms.update_one({"code": room_code}, {"$pull": {"users": {"sid":sid}}})
     leave_room(room_code, sid=sid)
     room_data = get_room(room_code)
     if len(room_data["users"]) == 0:
         rooms.delete_one({"code": room_code})
+    else:
+        back_to_lobby(room_code)
+        room_data = get_room(room_code)
     return room_data
 
+def create_user(sid, name):
+    return {
+        "sid": sid,
+        "name": name,
+        "roundScore": NOT_PLAYED,
+        "totalScore": 0,
+        "ready": False
+    }
+
+def random_character():
+    return random.randint(0, 82)
+
+def random_position():
+    x_offset = -10 + random.randint(0, 20)
+    y_offset = -10 + random.randint(0, 20)
+    return {
+        "xOffset": x_offset,
+        "yOffset": y_offset
+    }
+
+def random_alt():
+    return random.randint(1, 8)
 
 @io.on("connect")
 def handle_connect():
@@ -47,8 +85,9 @@ def handle_connect():
 def handle_disconnect():
     session_id = request.sid
     room_data = execute_leave_room(session_id)
-    emit("roomData", room_data, to=room_data["code"])
-    print(f"User {session_id} has left room")
+    if room_data:
+        emit("roomData", room_data, to=room_data["code"])
+        print(f"User {session_id} has left room")
     print(f"User {session_id} has disconnected")
 
 
@@ -58,11 +97,7 @@ def handle_join_joom(data):
     name = data["name"]
     room_code = data["code"]
 
-    user = {
-        "sid": session_id,
-        "name": name,
-        "score": 0
-    }
+    user = create_user(session_id, name)
     res = rooms.update_one({"code": room_code}, {"$push": {"users": user}})
     if res.acknowledged:
         join_room(room_code)
@@ -81,15 +116,13 @@ def handle_create_room(data):
     name = data["name"]
     room_code = generate_room_code()
 
+    user = create_user(session_id, name)
     room = {
         "code": room_code,
-        "state": 0,
+        "state": ROOM_LOBBY,
+        "round": 0,
         "users": [
-            {
-                "sid": session_id,
-                "name": name,
-                "score": 0
-            }
+            user
         ]
     }
     res = rooms.insert_one(room)
@@ -97,7 +130,7 @@ def handle_create_room(data):
         join_room(room_code)
         room_data = get_room(room_code)
         emit("roomData", room_data, to=room_code)
-        print(f"{name} created room {room_code}")
+        print(f"User {session_id} created room {room_code}")
     else:
         print("Error creating the room")
 
@@ -109,6 +142,78 @@ def handle_leave_room(data={}):
     room_data = execute_leave_room(session_id)
     emit("roomData", room_data, to=room_data["code"])
     print(f"User {session_id} has left room")
+
+
+def start_round(room_code):
+    character = random_character()
+    position = random_position()
+    alt = random_alt()
+    rooms.update_one({"code": room_code}, {"$set": {
+        "state": WAITING_SCORES, 
+        "character": character, 
+        "position": position,
+        "alt": alt,
+        "roundStartTime": str(datetime.now())}})
+    rooms.update_one({"code": room_code}, {"$inc": {"round": 1}})
+    # set every users ready to false
+    rooms.update_one({"code": room_code}, {"$set": {"users.$[elem].ready": False}}, array_filters=[{"elem.ready": True}])
+    rooms.update_one({"code": room_code}, {"$set": {"users.$[elem].roundScore": NOT_PLAYED}}, array_filters=[{"elem.roundScore": {"$ne": NOT_PLAYED}}])
+    room_data = get_room(room_code)
+    emit("roomData", room_data, to=room_code)
+    print(f"Room {room_code} has started round {room_data['round']} with character {character}, alt {alt} and position x: {position['xOffset']} y: {position['yOffset']}")
+    
+
+def back_to_lobby(room_code):
+    rooms.update_one({"code": room_code}, {"$set": {"state": ROOM_LOBBY, "round": 0}})
+    rooms.update_one({"code": room_code}, {"$set": {"users.$[elem].totalScore": 0}}, array_filters=[{"elem.totalScore": {"$ne": 0}}])
+    rooms.update_one({"code": room_code}, {"$set": {"users.$[elem].ready": False}}, array_filters=[{"elem.ready": True}])
+    room_data = get_room(room_code)
+    emit("roomData", room_data, to=room_code)
+    print(f"Going back to lobby in room {room_code}")
+
+
+@io.on("ready")
+def handle_ready(data={}):
+    session_id = request.sid
+    update_user_field(session_id, "ready", True)
+    room_data = get_user_room(session_id)
+    room_code = room_data["code"]
+
+    emit("roomData", room_data, to=room_code)
+    print(f"User {session_id} is ready")
+
+    # everyone is ready
+    if all([u["ready"] for u in room_data["users"]]) and len(room_data["users"]) >= 2:
+        if room_data["state"] == ENDGAME:
+            back_to_lobby(room_code)
+        else:
+            start_round(room_code)
+
+        
+def time_compare(*args):
+    return True
+
+@io.on("sendScore")
+def handle_send_score(data):
+    session_id = request.sid
+    score = data["score"]
+    submit_time = datetime.now()
+    room_data = get_user_room(session_id)
+    if time_compare(submit_time, room_data["roundStartTime"]):
+        update_user_field(session_id, "roundScore", score)
+        room_data = get_user_room(session_id)
+        emit("roomData", room_data, to=room_data["code"])
+        print(f"User {session_id} scored {score} points")
+        # everyone has played
+        if all([u["roundScore"] != NOT_PLAYED for u in room_data["users"]]):
+            rooms.update_one({"code": room_data["code"]}, {"$set": {"state": BETWEEN_ROUNDS, "character": None, "position": None, "alt": None}})
+            users = room_data["users"]
+            for u in users:
+                update_user_field(u["sid"], "totalScore", u["roundScore"] + u["totalScore"])
+            if room_data["round"] == LAST_ROUND:
+                rooms.update_one({"code": room_data["code"]}, {"$set": {"state": ENDGAME}})
+            room_data = get_user_room(session_id)
+            emit("roomData", room_data, to=room_data["code"])
 
 
 
