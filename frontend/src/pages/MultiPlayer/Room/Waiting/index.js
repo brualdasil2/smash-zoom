@@ -1,17 +1,21 @@
 import { useRoom } from "../../../../hooks/useRoom"
 import { ready } from "../../../../api/api"
+import { MainContainer } from "../../../../shared_styles"
+import UsersRank from "../../../../components/UsersRank"
+import { Button, Typography } from "@mui/material"
 
 export default function Waiting() {
 
     const {roomData} = useRoom()
 
+    const sortedUsers = roomData.users.sort((a, b) => b.totalScore - a.totalScore)
+
     return (
-        <div>
-            <h1>Fim da rodada</h1>
-            <h1>Ranking</h1>
-            {roomData.users.map((user) => <h4>{user.name}  {user.roundScore} {user.totalScore} {user.ready ? "(Pronto!)" : ""}</h4>)}
-            <button onClick={ready}>Pronto!</button>
-        </div>
+        <MainContainer>
+            <Typography variant="h4">Fim da rodada</Typography>
+            <UsersRank users={sortedUsers}/>
+            <Button variant="contained" onClick={ready}>Pronto!</Button>
+        </MainContainer>
 
     )
 }

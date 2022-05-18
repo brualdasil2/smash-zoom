@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { fighters } from "../../../../utils/fighters";
-import { Result } from "../../../../utils/result"
+import { Result } from "../../../../utils/result";
+import UsersWaiting from "../../../../components/UsersWaiting";
 import {
   ZoomImage,
   ImgContainer,
@@ -22,7 +23,7 @@ import {
 } from "@mui/material";
 import PauseIcon from "@mui/icons-material/Pause";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import { useRoom } from "../../../../hooks/useRoom"
+import { useRoom } from "../../../../hooks/useRoom";
 import { useNavigate } from "react-router-dom";
 
 export default function Game() {
@@ -38,15 +39,15 @@ export default function Game() {
   const [points, setPoints] = useState(1000);
   const [zoomEnded, setZoomEnded] = useState(false);
   const [startTime, setStartTime] = useState(0);
-  const [waiting, setWaiting] = useState(false)
+  const [waiting, setWaiting] = useState(false);
 
-    const {roomData, handleSendScore} = useRoom()
-    const navigate = useNavigate()
+  const { roomData, handleSendScore } = useRoom();
+  const navigate = useNavigate();
 
   const settings = {
     initialZoom: 20,
-    zoomTime: 10
-  }
+    zoomTime: 10,
+  };
 
   function parseDisplayName(urlName) {
     let parsedName = urlName
@@ -84,123 +85,130 @@ export default function Game() {
       setResult(Result.RIGHT);
     } else {
       setResult(Result.WRONG);
-      setPoints(0)
+      setPoints(0);
     }
-  } 
+  }
   function handleZoomEnd() {
     //const elem = document.getElementById("Zoom__Image")
     //elem.style.display = "none"
-    if (result !== Result.RIGHT) 
-        setPoints(0);
+    if (result !== Result.RIGHT) setPoints(0);
     setZooming(false);
     setZoomEnded(true);
   }
   function handleNext() {
-    setWaiting(true)
-    handleSendScore(Math.round(points))
+    setWaiting(true);
+    handleSendScore(Math.round(points));
   }
   return (
-    //   <>
-    //     <img src={`https://www.smashbros.com/assets_v2/img/fighter/${fighters[roomData.character]}/main${roomData.alt === 1 ? "" : roomData.alt}.png`}/>
-    //     <h4>char: {roomData.character}</h4>
-    //   </>
     <ScreenContainer>
-        {waiting ? (
-            <div>
-                <h1>Esperando os outros...</h1>
-                {roomData.users.map((user) => <h4>{user.name}  {user.roundScore !== -1 ? "(Jogou!)" : ""}</h4>)}
-            </div>
-        ):(
-            <>
-        <AppBar position="static">
-            <Toolbar sx={{ justifyContent: "space-between" }}>
-            <Typography variant="h6">Smash Zoom - Sala {roomData.code}</Typography>
-            </Toolbar>
-        </AppBar>
+      {waiting ? (
         <MainContainer>
+          <Typography variant="h4">Esperando os outros...</Typography>
+          <UsersWaiting users={roomData.users} />
+        </MainContainer>
+
+      ) : (
+        <>
+          <MainContainer>
+            <Typography variant="h4" sx={{margin:"20px"}}>Rodada {roomData.round}</Typography>
             <ImgContainer loaded>
-            {!loaded && <StyledSpinner />}
-            {!zoomEnded && roomData.character && (
+              {!loaded && <StyledSpinner />}
+              {!zoomEnded && roomData.character && (
                 <ZoomImage
-                id="Zoom__Image"
-                initialZoom={settings.initialZoom}
-                zoomTime={settings.zoomTime}
-                onLoad={() => {
+                  id="Zoom__Image"
+                  initialZoom={settings.initialZoom}
+                  zoomTime={settings.zoomTime}
+                  onLoad={() => {
                     setLoaded(true);
-                }}
-                loaded={loaded}
-                zoomOffset={roomData.position}
-                zooming={zooming}
-                onAnimationIteration={handleZoomEnd}
-                src={`https://www.smashbros.com/assets_v2/img/fighter/${fighters[roomData.character]}/main${roomData.alt === 1 ? "" : roomData.alt}.png`}
+                  }}
+                  loaded={loaded}
+                  zoomOffset={roomData.position}
+                  zooming={zooming}
+                  onAnimationIteration={handleZoomEnd}
+                  src={`https://www.smashbros.com/assets_v2/img/fighter/${fighters[roomData.character]}/main${roomData.alt === 1 ? "" : roomData.alt}.png`}
                 />
-            )}
-            <NoZoomImage
+              )}
+              <NoZoomImage
                 loaded={loaded}
                 zoomEnded={zoomEnded}
                 src={`https://www.smashbros.com/assets_v2/img/fighter/${fighters[roomData.character]}/main${roomData.alt === 1 ? "" : roomData.alt}.png`}
-            />
+              />
             </ImgContainer>
             <ButtonGroupContainer>
-            {zooming ? (
+              {zooming ? (
                 <Button variant="contained" onClick={pauseZoom}>
-                <PauseIcon />
+                  <PauseIcon />
                 </Button>
-            ) : (
+              ) : (
                 <Button
-                variant="contained"
-                onClick={startZoom}
-                disabled={zoomEnded || !loaded}
+                  variant="contained"
+                  onClick={startZoom}
+                  disabled={zoomEnded || !loaded}
                 >
-                <PlayArrowIcon />
+                  <PlayArrowIcon />
                 </Button>
-            )}
+              )}
             </ButtonGroupContainer>
-            <Autocomplete
-            disablePortal
-            id="fighter-options"
-            options={fighters.map((name) => parseDisplayName(name))}
-            sx={{ width: "200px", marginTop: "30px" }}
-            renderInput={(params) => <TextField {...params} label="Personagem" />}
-            onChange={(e, value, reason) => {
-                handleInputChange(e, value, reason);
-            }}
-            onInputChange={(e, value, reason) => {
-                setTypedGuess(value);
-            }}
-            inputValue={typedGuess}
-            value={guess}
-            isOptionEqualToValue={(option, value) =>
-                option === value || value === ""
-            }
-            />
-            <Button
-            variant="contained"
-            disabled={guess === "" || result !== Result.NOT_GUESSED || zooming}
-            onClick={handleGuess}
-            sx={{ marginTop: "15px" }}
-            >
-            Responder
-            </Button>
-            <Typography variant="h2" sx={{ marginTop: "20px" }}>
-            {result === Result.NOT_GUESSED
+            {result === Result.NOT_GUESSED && 
+            <>
+              <Autocomplete
+                disablePortal
+                id="fighter-options"
+                options={fighters.map((name) => parseDisplayName(name))}
+                sx={{ width: "200px", marginTop: "30px" }}
+                renderInput={(params) => (
+                  <TextField {...params} label="Personagem" />
+                )}
+                onChange={(e, value, reason) => {
+                  handleInputChange(e, value, reason);
+                }}
+                onInputChange={(e, value, reason) => {
+                  setTypedGuess(value);
+                }}
+                inputValue={typedGuess}
+                value={guess}
+                isOptionEqualToValue={(option, value) =>
+                  option === value || value === ""
+                }
+              />
+              <Button
+                variant="contained"
+                disabled={
+                  guess === "" || result !== Result.NOT_GUESSED || zooming
+                }
+                onClick={handleGuess}
+                sx={{ marginTop: "15px" }}
+              >
+                Responder
+              </Button>
+            </>
+            } 
+            <Typography variant="h5" sx={{ marginTop: "20px", textAlign:"center" }}>
+              {result === Result.NOT_GUESSED
                 ? ""
                 : result === Result.RIGHT
                 ? "Correto!"
-                : `Errado! A resposta era ${parseDisplayName(fighters[roomData.character])}`}
+                : `Errado! A resposta era ${parseDisplayName(
+                    fighters[roomData.character]
+                  )}`}
             </Typography>
             {result === Result.RIGHT && (
-            <Typography variant="h4">{`Pontos: ${Math.round(
+              <Typography variant="h4">{`Pontos: ${Math.round(
                 points
-            )}`}</Typography>
+              )}`}</Typography>
             )}
             {result !== Result.NOT_GUESSED && (
-                <Button variant="contained" onClick={handleNext}>Avançar</Button>
+              <Button
+                variant="contained"
+                onClick={handleNext}
+                sx={{ margin: "15px" }}
+              >
+                Avançar
+              </Button>
             )}
-        </MainContainer>
+          </MainContainer>
         </>
-        )}
-      
+      )}
     </ScreenContainer>
   );
 }

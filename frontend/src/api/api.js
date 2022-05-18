@@ -11,6 +11,9 @@ export function connect() {
 export function listenToRoom(func) {
     socket.on("roomData", func)
 }
+export function stopListeningToRoom(listener) {
+    socket.off("roomData", listener)
+}
 export function joinRoom(data) {
     socket.emit("joinRoom", data)
 }

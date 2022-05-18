@@ -2,6 +2,9 @@ import { useRoom } from "../../../../hooks/useRoom"
 import { leaveRoom, ready } from "../../../../api/api"
 import Users from "../../../../components/Users"
 import { useNavigate } from "react-router-dom"
+import { ScreenContainer, MainContainer } from "../../../../shared_styles"
+import { Typography, Button } from "@mui/material"
+
 
 export default function Lobby() {
 
@@ -9,11 +12,12 @@ export default function Lobby() {
     const navigate = useNavigate()
     
     return (
-        <div>
-            <h1>Sala {roomData.code}</h1>
+        <MainContainer>      
+
+            <Typography variant="h4">Sala {roomData.code}</Typography>
             <Users users={roomData.users} />
-            <button onClick={ready}>Pronto</button>
-            <button onClick={() => {leaveRoom();navigate("/multiplayer/menu")}}>Sair da sala</button>
-        </div>
+            <Button variant="contained" color="success" onClick={ready} sx={{margin:"15px"}}>Pronto</Button>
+            <Button variant="contained" onClick={() => {leaveRoom();navigate("/multiplayer/menu")}} sx={{margin:"15px"}}>Sair da sala</Button>
+        </MainContainer>
     )
 }

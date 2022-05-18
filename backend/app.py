@@ -59,7 +59,8 @@ def create_user(sid, name):
         "name": name,
         "roundScore": NOT_PLAYED,
         "totalScore": 0,
-        "ready": False
+        "ready": False,
+        "wins":0
     }
 
 def random_character():
@@ -165,6 +166,14 @@ def start_round(room_code):
     
 
 def back_to_lobby(room_code):
+    room_data = get_room(room_code)
+    if room_data["state"] == ENDGAME:
+        ranked_users = sorted(room_data["users"], reverse=True, key=lambda u : u["totalScore"])
+        if len(ranked_users) > 1:
+            if ranked_users[0]["totalScore"] > ranked_users[1]["totalScore"]:
+                winner = ranked_users[0]
+                update_user_field(winner["sid"], "wins", winner["wins"]+1)
+                print(f"User {winner['sid']} won, now has {winner['wins']+1} wins")
     rooms.update_one({"code": room_code}, {"$set": {"state": ROOM_LOBBY, "round": 0}})
     rooms.update_one({"code": room_code}, {"$set": {"users.$[elem].totalScore": 0}}, array_filters=[{"elem.totalScore": {"$ne": 0}}])
     rooms.update_one({"code": room_code}, {"$set": {"users.$[elem].ready": False}}, array_filters=[{"elem.ready": True}])

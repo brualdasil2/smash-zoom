@@ -9,7 +9,6 @@ export default function MultiPlayer() {
  
     return (
         <>
-            <h1>MP</h1>
             <Routes>
                 <Route path="menu" element={<MpMenu />} />
                 <Route path="room/*" element={<Room />} />
