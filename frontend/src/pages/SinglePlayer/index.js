@@ -7,6 +7,7 @@ import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import SettingsIcon from '@mui/icons-material/Settings';
 import Settings from "../../components/Settings"
+import { useNavigate } from "react-router-dom";
 
 export default function SinglePlayer() {
   const [fighterNumber, setFighterNumber] = useState(Math.round(Math.random()*82))
@@ -22,6 +23,7 @@ export default function SinglePlayer() {
   const [zoomEnded, setZoomEnded] = useState(false)
   const [startTime, setStartTime] = useState(0)
 
+  const navigate = useNavigate()
 
   const [settings, setSettings] = useState(
     {
@@ -98,7 +100,7 @@ export default function SinglePlayer() {
     <ScreenContainer>
       <AppBar position="static">
         <Toolbar sx={{justifyContent: "space-between"}}>
-          <Typography variant="h6">Smash Zoom</Typography>
+          <Typography variant="h6" onClick={() => navigate("/")}>Smash Zoom</Typography>
           <IconButton onClick={() => {setSettingsOpen(!settingsOpen)}}>
             <SettingsIcon />
           </IconButton>
