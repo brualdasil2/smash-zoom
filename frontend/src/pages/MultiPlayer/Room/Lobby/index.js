@@ -1,33 +1,19 @@
 import { useRoom } from "../../../../hooks/useRoom"
-import { ready } from "../../../../api/api"
+import { leaveRoom, ready } from "../../../../api/api"
+import Users from "../../../../components/Users"
+import { useNavigate } from "react-router-dom"
 
 export default function Lobby() {
 
     const {roomData} = useRoom()
-
+    const navigate = useNavigate()
+    
     return (
         <div>
             <h1>Sala {roomData.code}</h1>
-            {roomData.users.map((user) => <h4>{user.name}</h4>)}
+            <Users users={roomData.users} />
+            <button onClick={ready}>Pronto</button>
+            <button onClick={() => {leaveRoom();navigate("/multiplayer/menu")}}>Sair da sala</button>
         </div>
     )
 }
-//     code: '887827',
-//     state: 0,
-//     round: 0,
-//     users: [
-//       {
-//         sid: 'dzEd0BFnhvcq7KwwAABH',
-//         name: 'Bruno',
-//         roundScore: -1,
-//         totalScore: 0,
-//         ready: false
-//       },
-//       {
-//         sid: '8HdN7OtuIxHYwvrAAABJ',
-//         name: 'Carol',
-//         roundScore: -1,
-//         totalScore: 0,
-//         ready: false
-//       }
-//     ]

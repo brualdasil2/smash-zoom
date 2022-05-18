@@ -69,8 +69,8 @@ def random_position():
     x_offset = -10 + random.randint(0, 20)
     y_offset = -10 + random.randint(0, 20)
     return {
-        "xOffset": x_offset,
-        "yOffset": y_offset
+        "x": x_offset,
+        "y": y_offset
     }
 
 def random_alt():
@@ -160,7 +160,7 @@ def start_round(room_code):
     rooms.update_one({"code": room_code}, {"$set": {"users.$[elem].roundScore": NOT_PLAYED}}, array_filters=[{"elem.roundScore": {"$ne": NOT_PLAYED}}])
     room_data = get_room(room_code)
     emit("roomData", room_data, to=room_code)
-    print(f"Room {room_code} has started round {room_data['round']} with character {character}, alt {alt} and position x: {position['xOffset']} y: {position['yOffset']}")
+    print(f"Room {room_code} has started round {room_data['round']} with character {character}, alt {alt} and position x: {position['x']} y: {position['y']}")
     
 
 def back_to_lobby(room_code):

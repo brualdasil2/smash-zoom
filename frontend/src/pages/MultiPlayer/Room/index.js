@@ -5,6 +5,7 @@ import { useRoom } from "../../../hooks/useRoom"
 import Lobby from "./Lobby"
 import Game from "./Game"
 import Waiting from "./Waiting"
+import End from "./End"
 
 export default function Room() {
     const {roomData, setRoomData} = useRoom()
@@ -24,6 +25,9 @@ export default function Room() {
                 case 2:
                     navigate("/multiplayer/room/waiting")
                     break
+                case 3:
+                    navigate("/multiplayer/room/end")
+                    break
             }
         })
     }, [roomData])
@@ -33,6 +37,7 @@ export default function Room() {
             <Route path="lobby" element={<Lobby />} />
             <Route path="game" element={<Game />} />
             <Route path="waiting" element={<Waiting />} />
+            <Route path="end" element={<End />} />
         </Routes>
     )
 }
