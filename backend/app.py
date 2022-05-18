@@ -99,12 +99,13 @@ def handle_join_joom(data):
 
     user = create_user(session_id, name)
     res = rooms.update_one({"code": room_code}, {"$push": {"users": user}})
-    if res.acknowledged:
+    if res.modified_count > 0:
         join_room(room_code)
         room_data = get_room(room_code)
         emit("roomData", room_data, to=room_code)
         print(f"User {session_id} has joined room {room_code}")
     else:
+        emit("roomData", {"code": "ERROR"}, to=session_id)
         print(f"Room {room_code} does not exist")
 
 

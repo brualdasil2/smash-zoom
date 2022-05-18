@@ -33,11 +33,21 @@ export default function Room() {
     }, [roomData])
  
     return (
-        <Routes>
-            <Route path="lobby" element={<Lobby />} />
-            <Route path="game" element={<Game />} />
-            <Route path="waiting" element={<Waiting />} />
-            <Route path="end" element={<End />} />
-        </Routes>
+        <>
+        {roomData.code === "ERROR" ? (
+            <div>
+                <h1>Sala não existe!</h1>
+                <button onClick={() => navigate("/multiplayer/menu")}>Voltar</button>
+            </div>
+            ):(
+                <Routes>
+                <Route path="lobby" element={<Lobby />} />
+                <Route path="game" element={<Game />} />
+                <Route path="waiting" element={<Waiting />} />
+                <Route path="end" element={<End />} />
+            </Routes>
+        )}
+        
+        </>
     )
 }
