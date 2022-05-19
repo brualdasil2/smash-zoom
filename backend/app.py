@@ -19,7 +19,7 @@ rooms = db["rooms"]
 
 ROOM_LOBBY, WAITING_SCORES, BETWEEN_ROUNDS, ENDGAME = range(4)
 NOT_PLAYED = -1
-LAST_ROUND = 2
+LAST_ROUND = 5
 
 def generate_room_code():
     while True:
@@ -49,7 +49,8 @@ def execute_leave_room(sid):
     if len(room_data["users"]) == 0:
         rooms.delete_one({"code": room_code})
     else:
-        back_to_lobby(room_code)
+        if len(room_data["users"]) == 1:
+            back_to_lobby(room_code)
         room_data = get_room(room_code)
     return room_data
 
