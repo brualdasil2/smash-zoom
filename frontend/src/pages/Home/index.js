@@ -5,6 +5,7 @@ import { AppBar, Toolbar, Typography, Button } from "@mui/material"
 import PersonIcon from '@mui/icons-material/Person';
 import PeopleIcon from '@mui/icons-material/People';
 import NavigationButton from "../../components/NavigationButton";
+import { getSessionId } from "../../api/api"
 
 export default function Home() {
 

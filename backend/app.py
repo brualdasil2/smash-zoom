@@ -35,29 +35,42 @@ def get_room(room_code):
 def get_user_room(sid):
     return rooms.find_one({"users.sid":sid}, {"_id": 0})
 
+def get_user(sid):
+    parsed_room = rooms.find_one({"users.sid": sid}, {"users.$": 1, "_id": 0})
+    return parsed_room["users"][0]
+
 def update_user_field(sid, field, value):
     rooms.update_one({"users.sid": sid}, {"$set": {f"users.$.{field}": value}})
 
 def execute_leave_room(sid):
-    res = get_user_room(sid)
-    if not res:
+    room_data = get_user_room(sid)
+    if not room_data:
         return None
-    room_code = res["code"]
+    room_code = room_data["code"]
+    admin_leaving = get_user(sid)["admin"]
     rooms.update_one({"code": room_code}, {"$pull": {"users": {"sid":sid}}})
     leave_room(room_code, sid=sid)
     room_data = get_room(room_code)
-    if len(room_data["users"]) == 0:
+    deleted_room = False
+    if len(room_data["users"]) == 0 or admin_leaving:
         rooms.delete_one({"code": room_code})
+        deleted_room = True
     else:
         if len(room_data["users"]) == 1:
             back_to_lobby(room_code)
-        room_data = get_room(room_code)
+    room_data = get_room(room_code)
+    if deleted_room:
+        emit("roomData", {}, to=room_code)
+    else:
+        emit("roomData", room_data, to=room_code)
+    print(f"User {sid} has left room")
     return room_data
 
-def create_user(sid, name):
+def create_user(sid, name, admin):
     return {
         "sid": sid,
         "name": name,
+        "admin": admin,
         "roundScore": NOT_PLAYED,
         "totalScore": 0,
         "ready": False,
@@ -75,8 +88,12 @@ def random_position():
         "y": y_offset
     }
 
-def random_alt():
-    return random.randint(1, 8)
+def random_alt(alts):
+    if alts:
+        return random.randint(1, 8)
+    else:
+        return 1
+        
 
 @io.on("connect")
 def handle_connect():
@@ -86,10 +103,7 @@ def handle_connect():
 @io.on("disconnect")
 def handle_disconnect():
     session_id = request.sid
-    room_data = execute_leave_room(session_id)
-    if room_data:
-        emit("roomData", room_data, to=room_data["code"])
-        print(f"User {session_id} has left room")
+    execute_leave_room(session_id)
     print(f"User {session_id} has disconnected")
 
 
@@ -99,7 +113,7 @@ def handle_join_joom(data):
     name = data["name"]
     room_code = data["code"]
 
-    user = create_user(session_id, name)
+    user = create_user(session_id, name, False)
     res = rooms.update_one({"code": room_code}, {"$push": {"users": user}})
     if res.modified_count > 0:
         join_room(room_code)
@@ -107,7 +121,7 @@ def handle_join_joom(data):
         emit("roomData", room_data, to=room_code)
         print(f"User {session_id} has joined room {room_code}")
     else:
-        emit("roomData", {"code": "ERROR"}, to=session_id)
+        emit("roomData", None, to=session_id)
         print(f"Room {room_code} does not exist")
 
 
@@ -119,11 +133,15 @@ def handle_create_room(data):
     name = data["name"]
     room_code = generate_room_code()
 
-    user = create_user(session_id, name)
+    user = create_user(session_id, name, True)
     room = {
         "code": room_code,
         "state": ROOM_LOBBY,
         "round": 0,
+        "settings": {
+            "alts": True,
+            "rounds": 5
+        },
         "users": [
             user
         ]
@@ -142,15 +160,16 @@ def handle_create_room(data):
 @io.on("leaveRoom")
 def handle_leave_room(data={}):
     session_id = request.sid
-    room_data = execute_leave_room(session_id)
-    emit("roomData", room_data, to=room_data["code"])
-    print(f"User {session_id} has left room")
+    execute_leave_room(session_id)
+
+        
 
 
 def start_round(room_code):
     character = random_character()
     position = random_position()
-    alt = random_alt()
+    room_data = get_room(room_code)
+    alt = random_alt(room_data["settings"]["alts"])
     rooms.update_one({"code": room_code}, {"$set": {
         "state": WAITING_SCORES, 
         "character": character, 
@@ -221,10 +240,33 @@ def handle_send_score(data):
             users = room_data["users"]
             for u in users:
                 update_user_field(u["sid"], "totalScore", u["roundScore"] + u["totalScore"])
-            if room_data["round"] == LAST_ROUND:
+            if room_data["round"] == room_data["settings"]["rounds"]:
                 rooms.update_one({"code": room_data["code"]}, {"$set": {"state": ENDGAME}})
             room_data = get_user_room(session_id)
             emit("roomData", room_data, to=room_data["code"])
+
+@io.on("kickUser")
+def handle_kick_user(data):
+    session_id = request.sid
+    kicked_sid = data["sid"]
+    user = get_user(session_id)
+    if not user["admin"]:
+        return
+    execute_leave_room(kicked_sid)
+
+
+@io.on("updateSettings")
+def handle_update_settings(data):
+    session_id = request.sid
+    alts = data["alts"]
+    rounds = data["rounds"]
+    user = get_user(session_id)
+    if not user["admin"]:
+        return
+    rooms.update_one({"users.sid": session_id}, {"$set": {"settings": {"alts": alts, "rounds": rounds}}})
+    room_data = get_user_room(session_id)
+    emit("roomData", room_data, to=room_data["code"])
+    print(f"Settings updated to alts: {alts} and rounds: {rounds}")
 
 
 

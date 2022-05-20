@@ -15,7 +15,10 @@ export default function Room() {
 
     useEffect(() => {
         const listenerFunc = (data) => {
+            if (!data)
+                return
             setRoomData(data)
+            console.log(data)
             switch(data.state) {
                 case 0:
                     navigate("/multiplayer/room/lobby")
@@ -37,7 +40,7 @@ export default function Room() {
  
     return (
         <>
-        {roomData.code === "ERROR" ? (
+        {Object.keys(roomData).length === 0 ? (
         <div>
             <h1>Sala não existe!</h1>
             <button onClick={() => navigate("/multiplayer/menu")}>Voltar</button>
