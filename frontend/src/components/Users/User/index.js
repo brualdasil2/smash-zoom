@@ -16,6 +16,7 @@ export default function User({user, index}) {
 
     function handleRemoveUser() {
         handleKickUser(user.sid)
+        console.log(`Kicked ${user.name}`)
     }    
     
     return (
@@ -27,7 +28,7 @@ export default function User({user, index}) {
                     </ListItemIcon>}
                         <ListItemText inset={!user.ready} primary={user.name} />
                     <Wins wins={user.wins}/>
-                    {admin && !user.admin && <Tooltip open={removeOpen} onClose={() => setRemoveOpen(false)} title={<Button variant="contained" color="error" onClick={handleRemoveUser}>Remover</Button>} placement="right">
+                    {admin && !user.admin && <Tooltip open={removeOpen}  title={<Button variant="contained" color="error" onClick={handleRemoveUser}>Remover</Button>} placement="right">
                         <IconButton onClick={() => setRemoveOpen((open) => !open)}>
                             <MoreVertIcon  />
                         </IconButton>
