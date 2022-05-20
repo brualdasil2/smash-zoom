@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { fighters } from "../../../../utils/fighters";
+import { fighters, parseDisplayName } from "../../../../utils/fighters";
 import { Result } from "../../../../utils/result";
 import UsersWaiting from "../../../../components/UsersWaiting";
 import {
@@ -48,16 +48,6 @@ export default function Game() {
     initialZoom: 20,
     zoomTime: 10,
   };
-
-  function parseDisplayName(urlName) {
-    let parsedName = urlName
-      .replace(/_/g, " ")
-      .replace(
-        /\w\S*/g,
-        (word) => word.charAt(0).toUpperCase() + word.substr(1).toLowerCase()
-      );
-    return parsedName;
-  }
 
   function startZoom() {
     setZooming(true);

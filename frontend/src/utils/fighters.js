@@ -1,3 +1,12 @@
+export function parseDisplayName(urlName) {
+    if (urlName === "dq_hero")
+        return "Hero"
+    else if (urlName === "pyra")
+        return "Pyra And Mythra"
+    let parsedName = (urlName.replace(/_/g, " ")).replace(/\w\S*/g, (word) => word.charAt(0).toUpperCase() + word.substr(1).toLowerCase())
+    return(parsedName)
+}
+
 export const fighters = [
     "mario",
     "donkey_kong",

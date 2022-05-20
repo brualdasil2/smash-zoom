@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { fighters } from "../../utils/fighters"
+import { fighters, parseDisplayName } from "../../utils/fighters"
 import { Result } from "../../utils/result"
 import { ZoomImage, ImgContainer, MainContainer, ScreenContainer, ButtonGroupContainer, StyledSpinner, NoZoomImage } from "./styles"
 import { Button, Typography, Autocomplete, TextField, AppBar, IconButton, Toolbar, Drawer } from "@mui/material"
@@ -32,11 +32,6 @@ export default function SinglePlayer() {
       zoomTime: 10,
       zoomOffsetRange: 20,
     })
-
-  function parseDisplayName(urlName) {
-    let parsedName = (urlName.replace(/_/g, " ")).replace(/\w\S*/g, (word) => word.charAt(0).toUpperCase() + word.substr(1).toLowerCase())
-    return(parsedName)
-  }
 
   function randomizeOffset() {
     const xOffset = Math.round(-settings.zoomOffsetRange/2 + Math.random()*settings.zoomOffsetRange);
