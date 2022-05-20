@@ -5,6 +5,15 @@ import { LabelsContainer, Label } from "../../pages/MultiPlayer/Room/Waiting/sty
 
 export default function UsersRank({users}) {
 
+  function getUserRank(userIndex) {
+    if (userIndex === 0)
+      return userIndex + 1
+    if (users[userIndex].roundScore !== users[userIndex-1].roundScore)
+      return userIndex + 1
+    else 
+      return getUserRank(userIndex-1)
+  }
+
     return (
       <>
         <LabelsContainer>
@@ -14,7 +23,7 @@ export default function UsersRank({users}) {
         <Paper sx={{width:"80%",maxWidth:"300px",marginBottom:"30px"}}>   
 
             <List>
-                {users.map((user, index) => <UserRank key={index} index={index} user={user}/>)}
+                {users.map((user, index) => <UserRank key={index} index={index} rank={getUserRank(index)} user={user}/>)}
             </List>
         </Paper>
       </>

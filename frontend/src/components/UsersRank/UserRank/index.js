@@ -1,7 +1,7 @@
 import { Divider, ListItem, ListItemIcon, ListItemText } from "@mui/material"
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
-export default function UserRank({user, index}) {
+export default function UserRank({user, index, rank}) {
 
     return (
         <>
@@ -10,7 +10,7 @@ export default function UserRank({user, index}) {
                 {user.ready && <ListItemIcon>
                     <CheckCircleIcon color="success" />
                 </ListItemIcon>}
-                <ListItemText inset={!user.ready} primary={index+1} />
+                <ListItemText inset={!user.ready} primary={rank} />
                 <ListItemText primary={user.name} />
                 <ListItemText primary={user.roundScore} />
                 <ListItemText primary={user.totalScore} />
