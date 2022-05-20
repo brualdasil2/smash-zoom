@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { fighters, parseDisplayName } from "../../utils/fighters"
 import { Result } from "../../utils/result"
 import { ZoomImage, ImgContainer, MainContainer, ScreenContainer, ButtonGroupContainer, StyledSpinner, NoZoomImage } from "./styles"
@@ -24,6 +24,28 @@ export default function SinglePlayer() {
   const [startTime, setStartTime] = useState(0)
 
   const navigate = useNavigate()
+  
+  useEffect(() => {
+    function isConsoleOpen() {  
+      var startTime = new Date();
+      debugger;
+      var endTime = new Date();
+  
+      return endTime - startTime > 100;
+    }
+    function detectCheat() {
+      console.log("detecting..")
+      if (isConsoleOpen()) {
+        alert("Hackers não são bem-vindos no Smash Zoom.")
+        document.write('<h1>Trapacear no Smash Zoom é um crime muito sério</h1><img src="https://images.pond5.com/hand-cuffed-anonymous-hacker-jail-footage-060580436_iconl.jpeg"/>');
+      }
+    }
+    const ref = setInterval(detectCheat, 1000)
+    
+    return () => clearInterval(ref)
+  })
+
+
 
   const [settings, setSettings] = useState(
     {
