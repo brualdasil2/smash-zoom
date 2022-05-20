@@ -253,6 +253,7 @@ def handle_kick_user(data):
     if not user["admin"]:
         return
     execute_leave_room(kicked_sid)
+    emit("roomData", {}, to=kicked_sid)
 
 
 @io.on("updateSettings")
