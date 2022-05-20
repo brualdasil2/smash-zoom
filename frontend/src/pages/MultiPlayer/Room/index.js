@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Route, Routes, useNavigate } from "react-router"
 import { listenToRoom, stopListeningToRoom } from "../../../api/api"
 import { useRoom } from "../../../hooks/useRoom"
@@ -7,16 +7,19 @@ import Game from "./Game"
 import Waiting from "./Waiting"
 import End from "./End"
 import { AppBar, Toolbar, Typography } from "@mui/material"
-import { ScreenContainer } from "../../../shared_styles"
+import { ScreenContainer, StyledSpinner } from "../../../shared_styles"
 
 export default function Room() {
     const {roomData, setRoomData} = useRoom()
+    const [roomError, setRoomError] = useState(false)
     const navigate = useNavigate()
 
     useEffect(() => {
         const listenerFunc = (data) => {
-            if (!data)
+            if (!data) {
+                setRoomData({})
                 return
+            }
             setRoomData(data)
             console.log(data)
             switch(data.state) {
@@ -42,14 +45,21 @@ export default function Room() {
         <>
         {Object.keys(roomData).length === 0 ? (
         <div>
-            <h1>Sala não existe!</h1>
-            <button onClick={() => navigate("/multiplayer/menu")}>Voltar</button>
+            {!roomError ? 
+
+                <StyledSpinner style={{marginTop: "50px"}} onAnimationIteration={() => setRoomError(true)}/>
+            : (
+                <>
+                    <h1>Sala não existe!</h1>
+                    <button onClick={() => navigate("/multiplayer/menu")}>Voltar</button>
+                </>
+            )}
         </div>
         ):(
             <ScreenContainer>
                 <AppBar position="static">
                     <Toolbar sx={{justifyContent: "space-between"}}>
-                        <Typography variant="h6">Smash Zoom</Typography>
+                        <Typography variant="h6">Smash Zoom - Sala {roomData.code}</Typography>
                     </Toolbar>
                 </AppBar>
                 <Routes>
