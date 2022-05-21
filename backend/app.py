@@ -48,14 +48,18 @@ def execute_leave_room(sid):
         return None
     room_code = room_data["code"]
     admin_leaving = get_user(sid)["admin"]
+    # remove o usuário da sala no banco
     rooms.update_one({"code": room_code}, {"$pull": {"users": {"sid":sid}}})
+    # remove o usuário da room do socket
     leave_room(room_code, sid=sid)
     room_data = get_room(room_code)
     deleted_room = False
+    # casos de deletar a sala (último a sair ou admin)
     if len(room_data["users"]) == 0 or admin_leaving:
         rooms.delete_one({"code": room_code})
         deleted_room = True
     else:
+        # volta pro lobby se só sobrou 1 user
         if len(room_data["users"]) == 1:
             back_to_lobby(room_code)
     room_data = get_room(room_code)
