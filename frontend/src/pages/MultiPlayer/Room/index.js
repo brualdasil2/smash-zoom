@@ -8,11 +8,13 @@ import Waiting from "./Waiting"
 import End from "./End"
 import { AppBar, Toolbar, Typography } from "@mui/material"
 import { ScreenContainer, StyledSpinner } from "../../../shared_styles"
+import { useTranslation } from "react-i18next"
 
 export default function Room() {
     const {roomData, setRoomData} = useRoom()
     const [roomError, setRoomError] = useState(false)
     const navigate = useNavigate()
+    const { t } = useTranslation()
 
     useEffect(() => {
         const listenerFunc = (data) => {
@@ -21,7 +23,6 @@ export default function Room() {
                 return
             }
             setRoomData(data)
-            console.log(data)
             switch(data.state) {
                 case 0:
                     navigate("/multiplayer/room/lobby")
@@ -50,8 +51,8 @@ export default function Room() {
                 <StyledSpinner style={{marginTop: "50px"}} onAnimationIteration={() => setRoomError(true)}/>
             : (
                 <>
-                    <h1>Sala não existe!</h1>
-                    <button onClick={() => navigate("/multiplayer/menu")}>Voltar</button>
+                    <h1>{t("no_room")}</h1>
+                    <button onClick={() => navigate("/multiplayer/menu")}>{t("return")}</button>
                 </>
             )}
         </div>
@@ -59,7 +60,7 @@ export default function Room() {
             <ScreenContainer>
                 <AppBar position="static">
                     <Toolbar sx={{justifyContent: "space-between"}}>
-                        <Typography variant="h6">Smash Zoom - Sala {roomData.code}</Typography>
+                        <Typography variant="h6">Smash Zoom - {t("room")} {roomData.code}</Typography>
                     </Toolbar>
                 </AppBar>
                 <Routes>

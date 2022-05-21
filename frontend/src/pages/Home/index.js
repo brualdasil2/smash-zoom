@@ -6,10 +6,13 @@ import PersonIcon from '@mui/icons-material/Person';
 import PeopleIcon from '@mui/icons-material/People';
 import NavigationButton from "../../components/NavigationButton";
 import { getSessionId } from "../../api/api"
+import { useTranslation } from "react-i18next"
+import LanguageSelector from "../../components/LanguageSelector";
 
 export default function Home() {
 
     const navigate = useNavigate()
+    const { t } = useTranslation()
 
     return (
         <ScreenContainer>
@@ -19,6 +22,7 @@ export default function Home() {
                 </Toolbar>
             </AppBar>
             <MainContainer>
+                <LanguageSelector />
                 <ButtonsContainer>
                     <NavigationButton label="Singleplayer" path="/singleplayer"><PersonIcon sx={{width: "50px", height:"50px"}}/></NavigationButton>
                     <NavigationButton label="Multiplayer" path="/multiplayer/menu"><PeopleIcon sx={{width: "50px", height:"50px"}}/></NavigationButton>

@@ -5,7 +5,6 @@ import { Routes, Route } from "react-router-dom"
 import RoomContextProvider from "./contexts/RoomContext"
 
 function App() {
-  
 
   return (
     <RoomContextProvider>

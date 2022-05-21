@@ -1,7 +1,7 @@
 import socketIOClient from "socket.io-client"
 
 const socket = socketIOClient("http://127.0.0.1:5000/")
-//const socket = socketIOClient("https://ede0-2804-14d-4cd6-a25b-4402-7203-2fa5-6d6b.ngrok.io")
+//const socket = socketIOClient("https://8888-2804-14d-4cd6-a25b-e9d3-d26b-2304-e630.ngrok.io")
 export function connect() {
     socket.on("connect", () => {
         socket.send("Usuário conectado")

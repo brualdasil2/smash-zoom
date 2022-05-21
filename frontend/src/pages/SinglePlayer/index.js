@@ -8,6 +8,8 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import SettingsIcon from '@mui/icons-material/Settings';
 import Settings from "../../components/Settings"
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next"
+
 
 export default function SinglePlayer() {
   const [fighterNumber, setFighterNumber] = useState(Math.round(Math.random()*82))
@@ -24,6 +26,8 @@ export default function SinglePlayer() {
   const [startTime, setStartTime] = useState(0)
 
   const navigate = useNavigate()
+  const { t } = useTranslation()
+
   
   useEffect(() => {
     function isConsoleOpen() {  
@@ -160,7 +164,7 @@ export default function SinglePlayer() {
           />
         </ImgContainer>
         <ButtonGroupContainer>
-          <Button variant="contained" onClick={newRound} disabled={zooming}>Sortear</Button>
+          <Button variant="contained" onClick={newRound} disabled={zooming}>{t("new_character")}</Button>
           {zooming ? (
             <Button variant="contained" onClick={pauseZoom}><PauseIcon/></Button>
             ) : (
@@ -172,16 +176,16 @@ export default function SinglePlayer() {
             id="fighter-options"
             options={fighters.map((name) => (parseDisplayName(name)))}
             sx={{ width: "200px", marginTop: "30px"}}
-            renderInput={(params) => <TextField {...params} label="Personagem" />}
+            renderInput={(params) => <TextField {...params} label={t("character")} />}
             onChange={(e, value, reason) => {handleInputChange(e, value, reason)}}
             onInputChange={(e, value, reason) => {setTypedGuess(value)}}
             inputValue={typedGuess}
             value={guess}
             isOptionEqualToValue={(option, value) => (option === value || value === "")}
         />
-        <Button variant="contained" disabled={guess === "" || result === Result.RIGHT || zooming} onClick={handleGuess} sx={{marginTop: "15px"}}>Responder</Button>
-        <Typography variant="h2" sx={{marginTop: "20px"}}>{result === Result.NOT_GUESSED ? "" : result === Result.RIGHT ? "Correto!" : "Errado!"}</Typography>
-        {result === Result.RIGHT && <Typography variant="h4">{`Pontos: ${Math.round(points)}`}</Typography>}
+        <Button variant="contained" disabled={guess === "" || result === Result.RIGHT || zooming} onClick={handleGuess} sx={{marginTop: "15px"}}>{t("answer")}</Button>
+        <Typography variant="h2" sx={{marginTop: "20px"}}>{result === Result.NOT_GUESSED ? "" : result === Result.RIGHT ? t("correct") : t("wrong")}</Typography>
+        {result === Result.RIGHT && <Typography variant="h4">{`${t("score")}: ${Math.round(points)}`}</Typography>}
       </MainContainer>
     </ScreenContainer>
   );

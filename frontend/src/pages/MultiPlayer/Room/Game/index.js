@@ -25,6 +25,7 @@ import PauseIcon from "@mui/icons-material/Pause";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import { useRoom } from "../../../../hooks/useRoom";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function Game() {
   //const [fighterNumber, setFighterNumber] = useState(Math.round(Math.random()*82))
@@ -43,6 +44,7 @@ export default function Game() {
 
   const { roomData, handleSendScore } = useRoom();
   const navigate = useNavigate();
+  const { t } = useTranslation()
 
   useEffect(() => {
     function isConsoleOpen() {  
@@ -113,14 +115,14 @@ export default function Game() {
     <ScreenContainer>
       {waiting ? (
         <MainContainer>
-          <Typography variant="h4">Esperando os outros...</Typography>
+          <Typography variant="h4">{t("waiting")}</Typography>
           <UsersWaiting users={roomData.users} />
         </MainContainer>
 
       ) : (
         <>
           <MainContainer>
-            <Typography variant="h4" sx={{margin:"20px"}}>Rodada {roomData.round}</Typography>
+            <Typography variant="h4" sx={{margin:"20px"}}>{t("round")} {roomData.round}</Typography>
             <ImgContainer loaded>
               {!loaded && <StyledSpinner />}
               {!zoomEnded && roomData.character && (
@@ -167,7 +169,7 @@ export default function Game() {
                 options={fighters.map((name) => parseDisplayName(name))}
                 sx={{ width: "200px", marginTop: "30px" }}
                 renderInput={(params) => (
-                  <TextField {...params} label="Personagem" />
+                  <TextField {...params} label={t("character")} />
                 )}
                 onChange={(e, value, reason) => {
                   handleInputChange(e, value, reason);
@@ -189,7 +191,7 @@ export default function Game() {
                 onClick={handleGuess}
                 sx={{ marginTop: "15px" }}
               >
-                Responder
+                {t("answer")}
               </Button>
             </>
             } 
@@ -197,13 +199,13 @@ export default function Game() {
               {result === Result.NOT_GUESSED
                 ? ""
                 : result === Result.RIGHT
-                ? "Correto!"
-                : `Errado! A resposta era ${parseDisplayName(
+                ? t("correct")
+                : `${t("wrong_reveal")} ${parseDisplayName(
                     fighters[roomData.character]
                   )}`}
             </Typography>
             {result === Result.RIGHT && (
-              <Typography variant="h4">{`Pontos: ${Math.round(
+              <Typography variant="h4">{`${t("score")}: ${Math.round(
                 points
               )}`}</Typography>
             )}
@@ -213,7 +215,7 @@ export default function Game() {
                 onClick={handleNext}
                 sx={{ margin: "15px" }}
               >
-                Avançar
+                {t("next")}
               </Button>
             )}
           </MainContainer>

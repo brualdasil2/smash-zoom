@@ -2,6 +2,7 @@ import { Divider, ListItem, ListItemIcon, ListItemText } from "@mui/material"
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PendingIcon from '@mui/icons-material/Pending';
 import CancelIcon from '@mui/icons-material/Cancel';
+import KickButton from "../../KickButton";
 
 export default function UserWaiting({user, index}) {
 
@@ -23,6 +24,7 @@ export default function UserWaiting({user, index}) {
                         <CheckCircleIcon color="success" />
                     </ListItemIcon>
                 )}
+                <KickButton user={user} />
             </ListItem>
         </>
     )

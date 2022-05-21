@@ -1,7 +1,11 @@
-import { Divider, ListItem, ListItemIcon, ListItemText } from "@mui/material"
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { Divider, ListItem, ListItemIcon, ListItemText, Tooltip, IconButton, Button } from "@mui/material"
+import KickButton from '../../KickButton';
+
 
 export default function UserRank({user, index, rank}) {
+
+ 
 
     return (
         <>
@@ -14,6 +18,7 @@ export default function UserRank({user, index, rank}) {
                 <ListItemText primary={user.name} />
                 <ListItemText primary={user.roundScore} />
                 <ListItemText primary={user.totalScore} />
+                <KickButton user={user} />
             </ListItem>
         </>
     )
