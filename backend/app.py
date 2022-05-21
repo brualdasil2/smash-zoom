@@ -66,6 +66,9 @@ def execute_leave_room(sid):
     if deleted_room:
         emit("roomData", {}, to=room_code)
     else:
+        check_all_scores_sent(room_data)
+        check_all_users_ready(room_data)
+        room_data = get_room(room_code)
         emit("roomData", room_data, to=room_code)
     print(f"User {sid} has left room")
     return room_data
@@ -205,6 +208,12 @@ def back_to_lobby(room_code):
     emit("roomData", room_data, to=room_code)
     print(f"Going back to lobby in room {room_code}")
 
+def check_all_users_ready(room_data):
+    if all([u["ready"] for u in room_data["users"]]) and len(room_data["users"]) >= 2:
+        if room_data["state"] == ENDGAME:
+            back_to_lobby(room_data["code"])
+        else:
+            start_round(room_data["code"])
 
 @io.on("ready")
 def handle_ready(data={}):
@@ -217,15 +226,24 @@ def handle_ready(data={}):
     print(f"User {session_id} is ready")
 
     # everyone is ready
-    if all([u["ready"] for u in room_data["users"]]) and len(room_data["users"]) >= 2:
-        if room_data["state"] == ENDGAME:
-            back_to_lobby(room_code)
-        else:
-            start_round(room_code)
+    check_all_users_ready(room_data)
 
         
 def time_compare(*args):
     return True
+
+def check_all_scores_sent(room_data):
+    if room_data["state"] != WAITING_SCORES:
+        return
+    if all([u["roundScore"] != NOT_PLAYED for u in room_data["users"]]):
+        rooms.update_one({"code": room_data["code"]}, {"$set": {"state": BETWEEN_ROUNDS, "character": None, "position": None, "alt": None}})
+        users = room_data["users"]
+        for u in users:
+            update_user_field(u["sid"], "totalScore", u["roundScore"] + u["totalScore"])
+        if room_data["round"] == room_data["settings"]["rounds"]:
+            rooms.update_one({"code": room_data["code"]}, {"$set": {"state": ENDGAME}})
+        room_data = get_room(room_data["code"])
+        emit("roomData", room_data, to=room_data["code"])
 
 @io.on("sendScore")
 def handle_send_score(data):
@@ -238,16 +256,8 @@ def handle_send_score(data):
         room_data = get_user_room(session_id)
         emit("roomData", room_data, to=room_data["code"])
         print(f"User {session_id} scored {score} points")
-        # everyone has played
-        if all([u["roundScore"] != NOT_PLAYED for u in room_data["users"]]):
-            rooms.update_one({"code": room_data["code"]}, {"$set": {"state": BETWEEN_ROUNDS, "character": None, "position": None, "alt": None}})
-            users = room_data["users"]
-            for u in users:
-                update_user_field(u["sid"], "totalScore", u["roundScore"] + u["totalScore"])
-            if room_data["round"] == room_data["settings"]["rounds"]:
-                rooms.update_one({"code": room_data["code"]}, {"$set": {"state": ENDGAME}})
-            room_data = get_user_room(session_id)
-            emit("roomData", room_data, to=room_data["code"])
+        check_all_scores_sent(room_data)
+        
 
 @io.on("kickUser")
 def handle_kick_user(data):
