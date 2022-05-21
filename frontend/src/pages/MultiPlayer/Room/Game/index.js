@@ -57,8 +57,8 @@ export default function Game() {
     function detectCheat() {
       console.log("detecting..")
       if (isConsoleOpen()) {
-        alert("Hackers não são bem-vindos no Smash Zoom.")
-        document.write('<h1>Trapacear no Smash Zoom é um crime muito sério</h1><img src="https://images.pond5.com/hand-cuffed-anonymous-hacker-jail-footage-060580436_iconl.jpeg"/>');
+        alert(t("hacker_alert"))
+        document.write(`<h1>${t("hacker_page")}</h1><img src="https://images.pond5.com/hand-cuffed-anonymous-hacker-jail-footage-060580436_iconl.jpeg"/>`);
       }
     }
     const ref = setInterval(detectCheat, 1000)

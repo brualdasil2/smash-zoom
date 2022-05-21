@@ -37,5 +37,7 @@
     "end_round": "End of round",
     "end_game": "End of game",
     "back_lobby": "Back to lobby",
-    "select_language": "Select language"
+    "select_language": "Select language",
+    "hacker_alert": "Hackers are not welcome in Smash Zoom.",
+    "hacker_page": "Cheating on Smash Zoom is a serious crime"
 }

@@ -37,5 +37,7 @@
     "end_round": "Fim da rodada",
     "end_game": "Fim de jogo",
     "back_lobby": "Voltar ao lobby",
-    "select_language": "Seleciona o idioma"
+    "select_language": "Seleciona o idioma",
+    "hacker_alert": "Hackers não são bem-vindos no Smash Zoom.",
+    "hacker_page": "Trapacear no Smash Zoom é um crime muito sério"
 }
