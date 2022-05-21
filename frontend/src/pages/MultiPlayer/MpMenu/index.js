@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useRoom } from "../../../hooks/useRoom"
-import { ScreenContainer, MainContainer } from "../../../shared_styles"
+import { ScreenContainer, MainContainer, ClickableContainer } from "../../../shared_styles"
 import { AppBar, Toolbar, Typography, TextField, Button } from "@mui/material"
 import { useTranslation } from "react-i18next"
 
@@ -23,7 +23,9 @@ export default function MpMenu() {
             <ScreenContainer>
             <AppBar position="static">
                 <Toolbar sx={{justifyContent: "space-between"}}>
-                    <Typography onClick={() => navigate("/")} variant="h6" >Smash Zoom</Typography>
+                    <ClickableContainer>
+                        <Typography onClick={() => navigate("/")} variant="h6" >Smash Zoom</Typography>
+                    </ClickableContainer>
                 </Toolbar>
             </AppBar>
             <MainContainer>

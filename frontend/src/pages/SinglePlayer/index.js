@@ -9,6 +9,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import Settings from "../../components/Settings"
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next"
+import { ClickableContainer } from "../../shared_styles";
 
 
 export default function SinglePlayer() {
@@ -121,7 +122,9 @@ export default function SinglePlayer() {
     <ScreenContainer>
       <AppBar position="static">
         <Toolbar sx={{justifyContent: "space-between"}}>
-          <Typography variant="h6" onClick={() => navigate("/")}>Smash Zoom</Typography>
+          <ClickableContainer>
+            <Typography variant="h6" onClick={() => navigate("/")}>Smash Zoom</Typography>
+          </ClickableContainer>
           <IconButton onClick={() => {setSettingsOpen(!settingsOpen)}}>
             <SettingsIcon />
           </IconButton>

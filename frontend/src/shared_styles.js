@@ -34,3 +34,8 @@ export const StyledSpinner = styled.div`
     }
 }
 `
+export const ClickableContainer = styled.div`
+    :hover {
+        cursor: pointer;
+    }
+`
